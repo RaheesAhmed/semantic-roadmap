@@ -1,0 +1,31 @@
+[project]
+name = "rollsmary-semantic-roadmap"
+version = "0.1.0"
+description = "Proof-of-concept semantic roadmap and AI-ready knowledge base builder for RollsMary legacy files."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "openpyxl>=3.1.5",
+    "pydantic>=2.8.0",
+    "pypdf>=4.3.1",
+    "sqlglot>=26.0.0",
+]
+
+[project.scripts]
+semantic-roadmap = "semantic_roadmap.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/semantic_roadmap"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.2.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
