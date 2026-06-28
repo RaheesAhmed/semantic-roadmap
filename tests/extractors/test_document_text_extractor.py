@@ -1,10 +1,10 @@
 from pathlib import Path
 
-from semantic_roadmap.document_text_extractor import extract_docx_paragraphs
-from semantic_roadmap.pdf_text_extractor import extract_pdf_pages
+from semantic_roadmap.extractors.documents.docx_text_extractor import extract_docx_paragraphs
+from semantic_roadmap.extractors.documents.pdf_text_extractor import extract_pdf_pages
 
 
-PROJECT_ROOT_PATH = Path(__file__).resolve().parents[1]
+PROJECT_ROOT_PATH = Path(__file__).resolve().parents[2]
 
 
 def test_extract_docx_paragraphs_reads_rollsmary_api_sections() -> None:
@@ -28,3 +28,4 @@ def test_extract_pdf_pages_reads_ivr_flow_text() -> None:
     assert "IVR" in extracted_pages[0].page_text
     assert "ActionVerify" in extracted_pages[0].page_text
     assert "Rollsmary" in extracted_pages[0].page_text
+

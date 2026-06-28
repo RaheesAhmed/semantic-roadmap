@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from semantic_roadmap.semantic_roadmap_builder import build_semantic_roadmap
+from semantic_roadmap.roadmap.semantic_roadmap_builder import build_semantic_roadmap
 
 
-PROJECT_ROOT_PATH = Path(__file__).resolve().parents[1]
+PROJECT_ROOT_PATH = Path(__file__).resolve().parents[2]
 
 
 def test_build_semantic_roadmap_creates_human_and_ai_ready_outputs() -> None:
@@ -56,3 +56,4 @@ def test_build_semantic_roadmap_creates_human_and_ai_ready_outputs() -> None:
         and semantic_relationship["target_node_id"] in semantic_node_ids
         for semantic_relationship in knowledge_base_payload["semantic_relationships"]
     )
+

@@ -1,23 +1,23 @@
 from pathlib import Path
 
-from semantic_roadmap.api_contract_extractor import extract_api_endpoint_summaries
-from semantic_roadmap.semantic_models import (
+from semantic_roadmap.extractors.api.api_contract_extractor import extract_api_endpoint_summaries
+from semantic_roadmap.roadmap.semantic_models import (
     SemanticRoadmap,
 )
-from semantic_roadmap.semantic_node_factory import (
+from semantic_roadmap.roadmap.semantic_node_factory import (
     build_api_endpoint_nodes,
     build_database_project_node,
     build_procedure_nodes,
     build_table_nodes,
     build_workflow_node,
 )
-from semantic_roadmap.semantic_relationship_factory import (
+from semantic_roadmap.roadmap.semantic_relationship_factory import (
     build_core_workflow_relationships,
     build_procedure_table_relationships,
 )
-from semantic_roadmap.sql_inventory_builder import build_sql_inventory
-from semantic_roadmap.sql_semantic_extractor import extract_database_semantics
-from semantic_roadmap.workflow_extractor import extract_ivr_workflow_summary
+from semantic_roadmap.extractors.sql.sql_inventory_builder import build_sql_inventory
+from semantic_roadmap.extractors.sql.sql_semantic_extractor import extract_database_semantics
+from semantic_roadmap.extractors.workflows.ivr_workflow_extractor import extract_ivr_workflow_summary
 
 
 def build_semantic_roadmap(
@@ -89,3 +89,4 @@ def _build_database_summary(object_group_counts: dict[str, int]) -> str:
         for object_group_name, object_group_count in sorted_object_groups[:8]
     )
     return f"CRM database inventory grouped by object area. Top groups: {top_group_summary}."
+

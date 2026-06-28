@@ -1,9 +1,9 @@
-from semantic_roadmap.semantic_models import SemanticRelationship
-from semantic_roadmap.semantic_node_factory import (
+from semantic_roadmap.roadmap.semantic_models import SemanticRelationship
+from semantic_roadmap.roadmap.semantic_node_factory import (
     build_database_object_node_id,
     build_endpoint_node_id,
 )
-from semantic_roadmap.sql_semantic_extractor import StoredProcedureSummary
+from semantic_roadmap.extractors.sql.sql_semantic_extractor import StoredProcedureSummary
 
 
 def build_core_workflow_relationships() -> list[SemanticRelationship]:
@@ -60,4 +60,5 @@ def build_procedure_table_relationships(
                 )
             )
     return semantic_relationships
+
 

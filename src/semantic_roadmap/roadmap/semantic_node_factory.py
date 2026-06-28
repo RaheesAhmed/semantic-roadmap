@@ -1,11 +1,11 @@
-from semantic_roadmap.api_contract_models import ApiEndpointSummary
-from semantic_roadmap.semantic_models import SemanticNode
-from semantic_roadmap.sql_inventory_builder import SqlInventory
-from semantic_roadmap.sql_semantic_extractor import (
+from semantic_roadmap.extractors.api.api_contract_models import ApiEndpointSummary
+from semantic_roadmap.roadmap.semantic_models import SemanticNode
+from semantic_roadmap.extractors.sql.sql_inventory_builder import SqlInventory
+from semantic_roadmap.extractors.sql.sql_semantic_extractor import (
     SqlTableSummary,
     StoredProcedureSummary,
 )
-from semantic_roadmap.workflow_extractor import WorkflowSummary
+from semantic_roadmap.extractors.workflows.ivr_workflow_extractor import WorkflowSummary
 
 
 def build_database_project_node(sql_inventory: SqlInventory, source_path: str) -> SemanticNode:
@@ -147,4 +147,5 @@ def _build_table_full_name(table_summary: SqlTableSummary) -> str:
 
 def _build_procedure_full_name(procedure_summary: StoredProcedureSummary) -> str:
     return f"{procedure_summary.schema_name}.{procedure_summary.procedure_name}"
+
 

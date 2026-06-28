@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from semantic_roadmap.pdf_text_extractor import extract_pdf_pages
+from semantic_roadmap.extractors.documents.pdf_text_extractor import extract_pdf_pages
 
 
 class WorkflowSummary(BaseModel):
@@ -40,4 +40,5 @@ def extract_ivr_workflow_summary(ivr_flow_pdf_file_path: Path) -> WorkflowSummar
         steps=workflow_steps,
         supporting_text=workflow_text,
     )
+
 

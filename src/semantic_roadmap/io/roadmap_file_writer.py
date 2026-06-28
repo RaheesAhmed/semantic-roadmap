@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-from semantic_roadmap.quality_report_builder import build_extraction_quality_report
-from semantic_roadmap.semantic_models import SemanticRoadmap
+from semantic_roadmap.roadmap.quality_report_builder import build_extraction_quality_report
+from semantic_roadmap.roadmap.semantic_models import SemanticRoadmap
 
 
 def write_semantic_roadmap_outputs(
@@ -33,3 +33,4 @@ def write_semantic_roadmap_outputs(
     )
 
     return roadmap_markdown_file_path, knowledge_base_json_file_path, quality_report_file_path
+

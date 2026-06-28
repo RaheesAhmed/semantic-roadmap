@@ -1,13 +1,13 @@
 import re
 from pathlib import Path
 
-from semantic_roadmap.api_contract_models import ApiEndpointSummary
-from semantic_roadmap.api_field_parser import (
+from semantic_roadmap.extractors.api.api_contract_models import ApiEndpointSummary
+from semantic_roadmap.extractors.api.api_field_parser import (
     extract_business_rules,
     extract_request_parameters,
     extract_response_fields,
 )
-from semantic_roadmap.document_text_extractor import extract_docx_paragraphs
+from semantic_roadmap.extractors.documents.docx_text_extractor import extract_docx_paragraphs
 
 
 API_ENDPOINT_PATTERNS = [
@@ -87,3 +87,4 @@ def _extract_endpoint_section_paragraphs(
             break
 
     return docx_paragraphs[section_start_index:section_end_index]
+

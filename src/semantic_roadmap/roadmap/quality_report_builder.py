@@ -1,4 +1,4 @@
-from semantic_roadmap.semantic_models import SemanticRoadmap
+from semantic_roadmap.roadmap.semantic_models import SemanticRoadmap
 
 
 def build_extraction_quality_report(semantic_roadmap: SemanticRoadmap) -> str:
@@ -51,3 +51,4 @@ def _format_count_lines(value_counts: dict[str, int]) -> list[str]:
         f"- {value_name.replace('_', ' ')}: {value_count}"
         for value_name, value_count in value_counts.items()
     ]
+

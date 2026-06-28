@@ -1,7 +1,7 @@
 [project]
 name = "rollsmary-semantic-roadmap"
 version = "0.1.0"
-description = "Proof-of-concept semantic roadmap and AI-ready knowledge base builder for RollsMary legacy files."
+description = "Semantic roadmap and structured knowledge base builder for RollsMary legacy files."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

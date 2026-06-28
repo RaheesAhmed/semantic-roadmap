@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from semantic_roadmap.sql_inventory_builder import build_sql_inventory
+from semantic_roadmap.extractors.sql.sql_inventory_builder import build_sql_inventory
 
 
-PROJECT_ROOT_PATH = Path(__file__).resolve().parents[1]
+PROJECT_ROOT_PATH = Path(__file__).resolve().parents[2]
 
 
 def test_build_sql_inventory_counts_database_object_groups() -> None:
@@ -15,3 +15,4 @@ def test_build_sql_inventory_counts_database_object_groups() -> None:
     assert sql_inventory.object_group_counts["dbo/Tables"] == 139
     assert sql_inventory.object_group_counts["spq/Stored Procedures"] == 502
     assert "dbo/Tables/eBooking.sql" in sql_inventory.sample_object_paths
+

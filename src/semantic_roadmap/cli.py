@@ -1,8 +1,8 @@
 import argparse
 from pathlib import Path
 
-from semantic_roadmap.roadmap_file_writer import write_semantic_roadmap_outputs
-from semantic_roadmap.semantic_roadmap_builder import build_semantic_roadmap
+from semantic_roadmap.io.roadmap_file_writer import write_semantic_roadmap_outputs
+from semantic_roadmap.roadmap.semantic_roadmap_builder import build_semantic_roadmap
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
@@ -71,3 +71,4 @@ def _find_first_file_by_extension(data_folder_path: Path, file_extension: str) -
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

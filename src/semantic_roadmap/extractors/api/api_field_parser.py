@@ -1,6 +1,6 @@
 import re
 
-from semantic_roadmap.api_contract_models import ApiFieldSummary
+from semantic_roadmap.extractors.api.api_contract_models import ApiFieldSummary
 
 
 def extract_request_parameters(
@@ -164,4 +164,5 @@ def _should_keep_field_description_line(
     ):
         return False
     return True
+
 

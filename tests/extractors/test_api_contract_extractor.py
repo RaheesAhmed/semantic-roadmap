@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from semantic_roadmap.api_contract_extractor import extract_api_endpoint_summaries
+from semantic_roadmap.extractors.api.api_contract_extractor import extract_api_endpoint_summaries
 
 
-PROJECT_ROOT_PATH = Path(__file__).resolve().parents[1]
+PROJECT_ROOT_PATH = Path(__file__).resolve().parents[2]
 
 
 def test_extract_api_endpoint_summaries_reads_params_returns_and_status_codes() -> None:
@@ -25,3 +25,4 @@ def test_extract_api_endpoint_summaries_reads_params_returns_and_status_codes() 
     )
     assert "0000" in update_status_endpoint.business_rules
     assert "2000" in update_status_endpoint.business_rules
+

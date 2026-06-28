@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from semantic_roadmap.sql_semantic_extractor import (
+from semantic_roadmap.extractors.sql.sql_semantic_extractor import (
     extract_stored_procedure_summary,
     extract_table_summary,
 )
 
 
-PROJECT_ROOT_PATH = Path(__file__).resolve().parents[1]
+PROJECT_ROOT_PATH = Path(__file__).resolve().parents[2]
 
 
 def test_extract_table_summary_reads_columns_indexes_and_descriptions() -> None:
@@ -42,3 +42,4 @@ def test_extract_stored_procedure_summary_reads_parameters_fields_and_dependenci
     assert "dbo.eBookingRoom" in procedure_summary.referenced_tables
     assert "wBookingRid" in procedure_summary.selected_fields
     assert "wOldBookingStatus" in procedure_summary.selected_fields
+

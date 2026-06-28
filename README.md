@@ -19,7 +19,7 @@ This project recursively scans `data/` and extracts a system roadmap from SQL, D
 - 🔁 Extracts the IVR action verification workflow from PDF text
 - 🧠 Exports structured semantic nodes and validated relationships as JSON
 - 📋 Writes an extraction quality report with coverage counts
-- ✅ Keeps raw client files isolated under `data/` for repeatable tests
+- ✅ Keeps raw source files isolated under `data/` for repeatable tests
 
 ## Tech Stack
 
@@ -49,8 +49,8 @@ flowchart TD
 Clone and enter the project:
 
 ```powershell
-git clone <repository-url>
-cd chines_client
+git clone https://github.com/RaheesAhmed/semantic-roadmap.git
+cd semantic-roadmap
 ```
 
 Install dependencies:
@@ -88,23 +88,20 @@ data/
   Visio-IVR_Action_Verification_Flow.pdf   # IVR workflow sample
 src/
   semantic_roadmap/
-    api_contract_extractor.py              # DOCX API endpoint extraction
     cli.py                                 # command line entrypoint
-    document_text_extractor.py             # DOCX text extraction
-    pdf_text_extractor.py                  # PDF text extraction
-    roadmap_file_writer.py                 # output writer
-    semantic_models.py                     # roadmap graph models
-    semantic_node_factory.py               # semantic node builders
-    semantic_relationship_factory.py       # relationship builders
-    semantic_roadmap_builder.py            # orchestrates extraction
-    sql_semantic_extractor.py              # table and procedure extraction
-    sql_inventory_builder.py               # CRM DB SQL inventory
-    spreadsheet_text_extractor.py          # Excel sheet extraction
-    workflow_extractor.py                  # IVR workflow extraction
+    extractors/
+      api/                                 # DOCX API contract extraction
+      documents/                           # DOCX and PDF text extraction
+      spreadsheets/                        # Excel workbook extraction
+      sql/                                 # SQL inventory and semantic extraction
+      workflows/                           # IVR workflow extraction
+    inventory/                             # recursive data source discovery
+    io/                                    # output writers
+    roadmap/                               # semantic graph models and builders
 tests/
-  test_document_text_extractor.py
-  test_semantic_roadmap_builder.py
-  test_sql_inventory_builder.py
+  extractors/                              # extractor-level tests
+  inventory/                               # source discovery tests
+  roadmap/                                 # final roadmap tests
 ```
 
 ## API Documentation
@@ -124,4 +121,4 @@ Run this locally with uv. Place source files under `data/`, run `uv run semantic
 
 ## License
 
-Private client utility by Rahees Ahmed.
+Private utility by Rahees Ahmed.

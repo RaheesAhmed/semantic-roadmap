@@ -1,2 +1,1 @@
-"""Semantic roadmap proof-of-concept for RollsMary legacy files."""
-
+"""Semantic roadmap builder for RollsMary legacy files."""
