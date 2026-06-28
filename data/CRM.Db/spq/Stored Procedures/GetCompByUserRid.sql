@@ -1,0 +1,23 @@
+﻿
+CREATE PROCEDURE [spq].[GetCompByUserRid]
+    @pUserRid BIGINT ,
+    @pLangCd VARCHAR(30)
+AS
+    BEGIN
+        SET NOCOUNT ON;        
+
+        IF @@trancount = 0
+            SET TRANSACTION ISOLATION LEVEL SNAPSHOT;
+
+        SET @pLangCd = LOWER(@pLangCd);
+
+        SELECT  CASE WHEN @pLangCd = 'en-gb' THEN c.wEName
+                     ELSE c.wCName
+                END AS wCompName,
+				c.wCompNo
+        FROM    RollsMary.dbo.mCompany c
+                INNER JOIN RollsMary.dbo.mUsr u ON c.wCompNo = u.wCompNo
+        WHERE   u.RowID = @pUserRid
+                AND u.wStatus = 'Active'
+                AND c.wStatus = 'A';
+    END;

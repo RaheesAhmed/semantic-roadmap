@@ -1,0 +1,218 @@
+﻿CREATE PROCEDURE [spq].[GetSMSShowBooking]
+    @pBookingRid BIGINT ,
+    @pGuid VARCHAR(50) ,
+    @pLangCd VARCHAR(30)
+AS
+    BEGIN
+        SET NOCOUNT ON;
+
+        IF @@trancount = 0
+            SET TRANSACTION ISOLATION LEVEL SNAPSHOT;
+
+        SET @pLangCd = LOWER(ISNULL(NULLIF(@pLangCd, ''), 'zh-tw'));
+        -- MD轉介戶口
+        DECLARE @sIsMDAgent CHAR(1)='N'; 
+        -- MD跟進戶口，要求部門為：MD、VIP、FRONT
+        DECLARE @sIsMDFollow CHAR(1) = 'N';
+        -- 負責員工
+        DECLARE @sReqByName NVARCHAR(100);
+        -- 服務櫃檯電話
+        DECLARE @sServiceCounterTel NVARCHAR(1000);
+        -- 要求人
+        DECLARE @sCoordinator NVARCHAR(100);
+        
+        IF EXISTS(  SELECT  1
+                    FROM RollsMary.dbo.mAgent ma
+                    INNER JOIN RollsMary.dbo.mAgentFollow af ON af.wAgentCodeIn = ma.wAgentCodeIn AND af.wStatus = 'A'
+                    INNER JOIN RollsMary.dbo.mAgentFollowDtl afd ON afd.wAgentFollowRid = af.RowID AND afd.wStatus = 'A'
+                    INNER JOIN RollsMary.dbo.mDepartment md ON md.RowID = af.wDeptRid
+                    INNER JOIN RollsMary.dbo.mUsr mu ON mu.RowID = afd.wUsrRid
+                    INNER JOIN dbo.eBooking eb ON eb.wReqAgentCodeIn = ma.wAgentCodeIn
+                    WHERE   NULLIF(md.wUserLineGrp, '') IS NULL
+                        AND NULLIF(af.wYearMth, '') IS NULL
+                        AND NULLIF(afd.wYearMth, '') IS NULL
+                        AND ma.wAgentType = 'GAMBLERS'
+                        AND md.wCode = 'DEVELOP'
+                        AND eb.RowID =  @pBookingRid) 
+        BEGIN
+            SET @sIsMDAgent = 'Y'
+        END;
+
+        -- 如果不是MD轉介的戶口, 跟進部部門為MD、要求同事為MD / VIP / FRONT ？ 界面的跟進人還是戶口當前跟進人
+        IF @sIsMDAgent = 'N' AND EXISTS (   SELECT  1
+                                            FROM RollsMary.dbo.mAgent ma
+                                            INNER JOIN RollsMary.dbo.mAgentFollow af ON af.wAgentCodeIn = ma.wAgentCodeIn AND af.wStatus = 'A'
+                                            INNER JOIN RollsMary.dbo.mAgentFollowDtl afd ON afd.wAgentFollowRid = af.RowID AND afd.wStatus = 'A'
+                                            INNER JOIN RollsMary.dbo.mDepartment md ON md.RowID = af.wDeptRid
+                                            INNER JOIN RollsMary.dbo.mUsr mu ON mu.RowID = afd.wUsrRid
+                                            INNER JOIN dbo.eBooking eb ON eb.wReqAgentCodeIn = ma.wAgentCodeIn
+                                            INNER JOIN RollsMary.dbo.mDepartment rd ON rd.wCode = eb.wReqDepartment AND NULLIF(rd.wUserLineGrp, '') IS NULL
+                                            WHERE   NULLIF(md.wUserLineGrp, '') IS NULL
+                                                AND NULLIF(af.wYearMth, '') IS NULL
+                                                AND NULLIF(afd.wYearMth, '') IS NULL
+                                                -- AND md.wCode = 'DEVELOP' -- 跟進部門：市場部
+                                                AND rd.wCode IN ('DEVELOP', 'HOUSEKEEPER', 'FRONT') -- 要求部門：MD、VIP、FRONT
+                                                AND eb.RowID =  @pBookingRid) 
+        BEGIN
+            SET @sIsMDFollow = 'Y'
+        END;
+
+        IF @sIsMDAgent = 'Y'
+        BEGIN
+            -- 跟進同事 的英文名+(小名)
+            SET @sCoordinator = (
+                SELECT CONCAT(mu.wName, IIF(NULLIF(mu.wNickName, '') IS NULL, '', CONCAT('(', mu.wNickName, ')'))) 
+                FROM dbo.eBooking eb 
+                INNER JOIN RollsMary.dbo.mUsr mu ON mu.RowID = eb.wStaffFollwedRid  -- 跟進同事
+                WHERE eb.RowID = @pBookingRid
+            );
+
+            -- 如果界面冇填到跟進人，取戶口當前跟進人
+            IF NULLIF(@sCoordinator, '') IS NULL
+            BEGIN
+                SET @sCoordinator = (
+                    SELECT TOP(1) CONCAT(mu.wName, IIF(NULLIF(mu.wNickName, '') IS NULL, '', CONCAT('(', mu.wNickName, ')'))) 
+                    FROM RollsMary.dbo.mAgent ma
+                    INNER JOIN RollsMary.dbo.mAgentFollow af ON af.wAgentCodeIn = ma.wAgentCodeIn AND af.wStatus = 'A'
+                    INNER JOIN RollsMary.dbo.mAgentFollowDtl afd ON afd.wAgentFollowRid = af.RowID AND afd.wStatus = 'A'
+                    INNER JOIN RollsMary.dbo.mDepartment md ON md.RowID = af.wDeptRid
+                    INNER JOIN RollsMary.dbo.mUsr mu ON mu.RowID = afd.wUsrRid
+                    INNER JOIN dbo.eBooking eb ON eb.wReqAgentCodeIn = ma.wAgentCodeIn
+                    WHERE   NULLIF(md.wUserLineGrp, '') IS NULL
+                        AND NULLIF(af.wYearMth, '') IS NULL
+                        AND NULLIF(afd.wYearMth, '') IS NULL
+                        AND md.wCode IN ('DEVELOP', 'HOUSEKEEPER', 'FRONT') -- 跟進部門：MD、VIP、FRONT
+                        AND eb.RowID =  @pBookingRid 
+                    ORDER BY md.wCode ASC, afd.wIsMainInCharge DESC
+                );
+            END
+        END
+
+        IF @sIsMDAgent = 'N' AND @sIsMDFollow = 'Y'
+        BEGIN
+            -- 要求同事 的英文名+(小名)
+            SET @sCoordinator = (
+                SELECT CONCAT(mu.wName, IIF(NULLIF(mu.wNickName, '') IS NULL, '', CONCAT('(', mu.wNickName, ')'))) 
+                FROM dbo.eBooking eb 
+                INNER JOIN RollsMary.dbo.mUsr mu ON mu.RowID = eb.wReqUserRid 
+                WHERE eb.RowID = @pBookingRid
+            );
+        END
+
+        -- 負責員工：MD轉介，跟進同事 + 電話
+        IF @sIsMDAgent = 'Y'
+        BEGIN
+            SELECT @sReqByName = IIF(@pLangCd = 'en-gb', u_fol.wName, u_fol.wCName),
+                   @sServiceCounterTel = wStaffTelephone
+            FROM   dbo.eBooking b
+            LEFT JOIN RollsMary.dbo.mUsr u_fol ON u_fol.RowID = b.wStaffFollwedRid --跟進同事
+            WHERE  b.RowID = @pBookingRid; 
+        END
+
+        -- 負責員工：大量MD轉介，經手人 + 場館電話
+        IF @sIsMDAgent = 'N'
+        BEGIN
+            SELECT @sReqByName = CASE WHEN @pLangCd = 'en-gb'  THEN ISNULL(mu.wName,'') ELSE ISNULL(mu.wCName,'') END ,
+                   @sServiceCounterTel =  STUFF((SELECT CONCAT(',', scc.wTel)  FROM CRM.dbo.mServiceCounterContact scc WHERE scc.wSeriverCounterRid = sc.RowID AND scc.wContactType = 'CSSMS' AND scc.wDepartmentCode = 'ROOM' FOR XML PATH('')), 1, 1, N'')
+            FROM   dbo.eBooking b
+            LEFT JOIN RollsMary.dbo.mUsr mu ON mu.RowID = b.wUpdBy --經手人
+            LEFT JOIN CRM.dbo.mServiceCounter sc ON sc.RowID = b.wDebitCounterRid AND sc.wStatus = 'A'
+            WHERE  b.RowID = @pBookingRid;
+        END
+       
+        -- Selecte Result
+        SELECT  wIsMDAgent = @sIsMDAgent, -- MD轉介戶口
+                wIsMDFollow = @sIsMDFollow, -- 非MD轉介的戶口, 跟進部部門為MD、要求同事為MD / VIP / FRONT
+                wHeaderType = CAST(IIF( sc_debit.wCode IN ( 'CR', 'FY-MFM' ), 'SUNTRAVEL', 'SUNGROUP') AS VARCHAR(30)),--"碼頭服務部" 及 "中央訂務部"  --> 顯示 「太陽旅遊溫馨提示：」 ---> SUNTRAVEL  = CR, FY-MFM, AP-MFM (Not Sure),
+                bs.RowID ,
+                bs.wBookingRid ,
+                bs.wShowRid ,
+                bs.wOrderNo ,
+                bs.wTravelAgencyRid ,
+                bs.wSupplier ,
+                bs.wShowDt ,
+                bs.wCurrCode ,
+                bs.wTotalAmt ,
+                bs.wExpenseAmt ,
+                bs.wTotalCost ,
+                bs.wPaymentMethod ,
+                bs.wUseBlackCard ,
+                bs.wRemark ,
+                bs.wStatus ,
+                bs.wBookingStatus ,
+                bs.wTotalQuantity ,
+                bs.wReceiptNo ,
+                bs.wHaveTicket ,
+                bs.wOtherName ,
+                s.wName AS wShowName ,
+                s.wVenue ,
+                b.wBookingType ,
+                b.wRefNo ,
+                b.[GUID] ,
+                b.wReqCounterRid ,
+                b.wDebitCounterRid ,
+                b.wReqCustomerRid ,
+                b.wDebitCustomerRid ,
+                b.wReqDepartment ,
+                b.wReqUserRid ,
+                wReqByName = ISNULL(@sReqByName, '') ,
+                b.wAsstBooker ,
+                b.wAssBookerTel ,
+                b.wDebitDt ,
+                b.wExpDt ,
+                b.wCancelDebitDt ,
+                b.wCancelReasonCd ,
+                b.wCancelBy ,
+                b.wCancelDt ,
+                b.wTravePkgRid ,
+                b.wReqAgentCodeIn ,
+                wCoordinator = IIF(@sIsMDAgent = 'Y' OR @sIsMDFollow = 'Y', ISNULL(@sCoordinator, ''),  b.wCoordinator),
+                b.wUser,
+                b.wIsUser,
+                wReqAgentName = CASE WHEN @pLangCd = 'en-gb' THEN a_r.wEName ELSE a_r.wCName END ,
+                a_r.wAgentCode_Display AS wReqAgentCode_Display ,
+                b.wDebitAgentCodeIn ,
+                wDebitAgentName = CASE WHEN @pLangCd = 'en-gb' THEN a_d.wEName ELSE a_d.wCName END ,
+                a_d.wAgentCode_Display AS wDebitAgentCode_Display ,
+                b.wApprovalAgentCodeIn ,
+                wApprovalName = CASE WHEN @pLangCd = 'en-gb' THEN a_a.wEName ELSE a_a.wCName END ,
+                a_a.wAgentCode_Display AS wApprovalAgentCode_Display ,
+                b.wCrtDt ,
+                b.wCrtBy ,
+                wCrtByName = CASE WHEN @pLangCd = 'en-gb' THEN u_crt.wName ELSE u_crt.wCName END ,
+                b.wUpdDt ,
+                b.wUpdBy ,
+                wUpdByName = CASE WHEN @pLangCd = 'en-gb' THEN u.wName ELSE u.wCName END ,
+                tc.wTicCollPoint ,
+                mtc.wName AS wTicCollPointName ,
+                mtc.wAddress AS wTicCollPointAddress ,
+                tc.wIsCollected ,
+                tc.wCollDate ,
+                tc.wCollStaff ,
+                tc.wCollRemark ,
+                tc.wSeqNo ,
+                stp.wTicketType AS wTicketPriceTypeName ,
+                bst.wQuantity AS wShowTicketQuantity ,
+                stp.wTicketType ,
+                tp.wClassCd ,
+                wServiceCounterTel = ISNULL(@sServiceCounterTel, '') ,
+                sc_debit.wSMSName AS wServiceCounterName ,
+                s.wShowCatCode ,
+                s.wPerformanceArea ,
+                s.wIsFullDay
+        FROM dbo.eBookingShow bs
+        INNER JOIN CRM.dbo.eBooking b ON bs.wBookingRid = b.RowID
+        INNER JOIN dbo.mShow s ON s.RowID = bs.wShowRid
+        LEFT JOIN CRM.dbo.eTicketCollection tc ON tc.wBookingRid = bs.wBookingRid
+        LEFT JOIN CRM.dbo.eBookingShowTicket bst ON bst.wBookingShowRid = bs.RowID
+        LEFT JOIN CRM.dbo.mShowTicketPrice stp ON stp.RowID = bst.wShowTicketPriceRid
+        LEFT JOIN CRM.dbo.eTicketPricing tp ON tp.RowID = bst.wShowTicketPriceRid
+        LEFT JOIN RollsMary.dbo.mUsr u ON u.RowID = b.wUpdBy
+        LEFT JOIN RollsMary.dbo.mUsr u_crt ON u_crt.RowID = b.wCrtBy
+        LEFT JOIN RollsMary.dbo.mAgent a_r ON a_r.wAgentCodeIn = b.wReqAgentCodeIn
+        LEFT JOIN RollsMary.dbo.mAgent a_d ON a_d.wAgentCodeIn = b.wDebitAgentCodeIn
+        LEFT JOIN RollsMary.dbo.mAgent a_a ON a_a.wAgentCodeIn = b.wApprovalAgentCodeIn
+        LEFT JOIN CRM.dbo.mServiceCounter sc_debit ON sc_debit.RowID = b.wDebitCounterRid
+        LEFT JOIN CRM.dbo.mTicketCollectionPoint mtc ON mtc.wCode = tc.wTicCollPoint
+        WHERE   b.RowID = @pBookingRid;
+    END;

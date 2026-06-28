@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[eAccountAnalysis] (
+    [RowID]                      BIGINT         NOT NULL,
+    [wListSameNameAccount]       NVARCHAR (200) NOT NULL,
+    [wRelationship]              NVARCHAR (100) NOT NULL,
+    [wUplineRelation]            NVARCHAR (100) NOT NULL,
+    [wOtherBettingType]          NVARCHAR (200) NOT NULL,
+    [wOperation]                 NVARCHAR (100) NOT NULL,
+    [wBRolling]                  NVARCHAR (100) NOT NULL,
+    [wCardGame]                  NVARCHAR (200) NOT NULL,
+    [wTripRecord]                NVARCHAR (200) NOT NULL,
+    [wReturnToMarketingDept]     NVARCHAR (100) NOT NULL,
+    [wWorkWithCash]              NVARCHAR (100) NOT NULL,
+    [wEventsWithSpecialApproval] NVARCHAR (200) NOT NULL,
+    [wOtherLineGroup]            NVARCHAR (100) NOT NULL,
+    [wRemarks]                   NVARCHAR (500) NOT NULL,
+    [wAgentCodeIn]               VARCHAR (14)   NOT NULL,
+    [wAccountStatus]             VARCHAR (5)    NOT NULL,
+    [wAccountSubStatus]          VARCHAR (5)    NOT NULL,
+    [wCrtDt]                     DATETIME2 (7)  NOT NULL,
+    [wCrtBy]                     BIGINT         NOT NULL,
+    [wUpdDt]                     DATETIME2 (7)  NOT NULL,
+    [wUpdBy]                     BIGINT         NOT NULL,
+    CONSTRAINT [PK_eAccountAnalysis] PRIMARY KEY CLUSTERED ([RowID] ASC)
+);
+

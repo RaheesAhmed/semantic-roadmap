@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[eBirthday] (
+    [RowID]             BIGINT          NOT NULL,
+    [wVIPPersonRid]     BIGINT          NOT NULL,
+    [wYear]             INT             NOT NULL,
+    [wIsLeapMonth]      CHAR (1)        CONSTRAINT [DF__eBirthday__wIsLe__182EFD28] DEFAULT ('N') NOT NULL,
+    [wGiftType]         VARCHAR (10)    NOT NULL,
+    [wRegion]           VARCHAR (30)    NOT NULL,
+    [wFollowDeptRid]    BIGINT          NULL,
+    [wFollowTeamRid]    BIGINT          NULL,
+    [wFollowUsrRid]     BIGINT          NULL,
+    [wIsPushWeChat]     CHAR (1)        CONSTRAINT [DF__eBirthday__wIsPu__19232161] DEFAULT ('N') NOT NULL,
+    [wIsRefusedContact] VARCHAR (1)     CONSTRAINT [DF__eBirthday__wIsRe__1A17459A] DEFAULT ('N') NOT NULL,
+    [wPresetGiftDt]     DATE            NULL,
+    [wApprovedStatus]   VARCHAR (5)     CONSTRAINT [DF__eBirthday__wAppr__1B0B69D3] DEFAULT ('N') NOT NULL,
+    [wGiftStatus]       VARCHAR (5)     CONSTRAINT [DF__eBirthday__wGift__1BFF8E0C] DEFAULT ('N') NOT NULL,
+    [wSMSStatus]        VARCHAR (5)     CONSTRAINT [DF__eBirthday__wSMSS__1CF3B245] DEFAULT ('N') NOT NULL,
+    [wStatus]           CHAR (1)        CONSTRAINT [DF__eBirthday__wStat__1DE7D67E] DEFAULT ('A') NOT NULL,
+    [wCrtBy]            BIGINT          NOT NULL,
+    [wCrtDt]            DATETIME2 (7)   NOT NULL,
+    [wUpdBy]            BIGINT          NOT NULL,
+    [wUpdDt]            DATETIME2 (7)   NOT NULL,
+    [wCreditAmt]        NUMERIC (18, 4) CONSTRAINT [DF__eBirthday__wCred__1058D136] DEFAULT ((0)) NOT NULL,
+    [wIsNew]            CHAR (1)        CONSTRAINT [DF__eBirthday__wIsNe__349631AC] DEFAULT ('Y') NOT NULL,
+    CONSTRAINT [PK__eBirthda__FFEE74517D0CF3C2] PRIMARY KEY CLUSTERED ([RowID] ASC)
+);
+

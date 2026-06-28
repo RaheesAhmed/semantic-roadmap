@@ -1,0 +1,5 @@
+﻿CREATE SCHEMA [vipRpt]
+    AUTHORIZATION [dbo];
+
+
+

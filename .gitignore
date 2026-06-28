@@ -4,6 +4,6 @@ __pycache__/
 .env
 *.pyc
 /scratch/
-/data/
+
 /outputs/
 chat.md

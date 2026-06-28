@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[mAccountRelationshipDownlineSetting] (
+    [RowID]                           BIGINT         NOT NULL,
+    [wIsMeetingReminder]              VARCHAR (5)    NOT NULL,
+    [wIsEventReminder]                VARCHAR (5)    NOT NULL,
+    [wIsGiftReminder]                 VARCHAR (5)    NOT NULL,
+    [wGiftRemark]                     NVARCHAR (500) NOT NULL,
+    [wIsInvitationReminder]           VARCHAR (5)    NOT NULL,
+    [wIsBirthdayReminder]             VARCHAR (5)    NOT NULL,
+    [wIsProvideRepaymentStatus]       VARCHAR (5)    NOT NULL,
+    [wBirthdayMealPresentArrangement] VARCHAR (5)    NOT NULL,
+    [wTargetAchievedGift]             VARCHAR (5)    NOT NULL,
+    [wEventInvitation]                VARCHAR (5)    NOT NULL,
+    [wWaytoRemind]                    VARCHAR (5)    NOT NULL,
+    [wWaytoRemindRemarks]             NVARCHAR (500) NOT NULL,
+    [wIsResponsibleForExpenses]       VARCHAR (5)    NOT NULL,
+    [wAgentCodeIn]                    VARCHAR (14)   NOT NULL,
+    [wDownlineAgentCodeIn]            VARCHAR (14)   NULL,
+    [wCrtDt]                          DATETIME2 (7)  NOT NULL,
+    [wCrtBy]                          BIGINT         NOT NULL,
+    [wUpdDt]                          DATETIME2 (7)  NOT NULL,
+    [wUpdBy]                          BIGINT         NOT NULL,
+    [wUplineSettingsType]             VARCHAR (5)    NULL,
+    CONSTRAINT [PK_mAccountRelationshipDownlineSettings] PRIMARY KEY CLUSTERED ([RowID] ASC)
+);
+

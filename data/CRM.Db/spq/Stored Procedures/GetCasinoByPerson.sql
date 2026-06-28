@@ -1,0 +1,32 @@
+﻿-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [spq].[GetCasinoByPerson]
+(
+@wPersonRID bigint 
+)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select 
+RowID,
+wPersonRID,
+wCardType,
+wCardNo,
+wExpiryDate,
+wStatus,
+wCrtDt,
+wCrtBy,
+wUpdDt,
+wUpdBy
+from mPersonMemberCard pmc
+where wPersonRID = @wPersonRID
+AND pmc.wStatus = 'A'
+
+END
