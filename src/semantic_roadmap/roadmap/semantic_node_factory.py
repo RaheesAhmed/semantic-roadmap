@@ -1,4 +1,5 @@
 from semantic_roadmap.extractors.api.api_contract_models import ApiEndpointSummary
+from semantic_roadmap.extractors.source.source_file_models import SourceFileSummary
 from semantic_roadmap.roadmap.semantic_models import SemanticNode
 from semantic_roadmap.extractors.sql.sql_inventory_builder import SqlInventory
 from semantic_roadmap.extractors.sql.sql_semantic_extractor import (
@@ -124,6 +125,29 @@ def build_api_endpoint_nodes(
     ]
 
 
+def build_source_file_nodes(
+    source_file_summaries: list[SourceFileSummary],
+) -> list[SemanticNode]:
+    """Build semantic nodes for high-value non-SQL source files."""
+    return [
+        SemanticNode(
+            node_id=_build_source_file_node_id(source_file_summary.source_path),
+            node_type="source_file",
+            name=source_file_summary.title,
+            description=source_file_summary.summary,
+            source_path=source_file_summary.source_path,
+            supporting_text=source_file_summary.supporting_text,
+            metadata={
+                "file_extension": source_file_summary.file_extension,
+                "source_category": source_file_summary.source_category,
+                "discovered_symbols": source_file_summary.discovered_symbols,
+                "discovered_references": source_file_summary.discovered_references,
+            },
+        )
+        for source_file_summary in source_file_summaries
+    ]
+
+
 def build_endpoint_node_id(endpoint_name: str) -> str:
     """Build stable node id for an API endpoint."""
     normalized_endpoint_name = endpoint_name.strip("/").replace("/", "_")
@@ -139,6 +163,17 @@ def build_database_object_node_id(object_type: str, object_name: str) -> str:
         .replace(" ", "_")
     )
     return f"database_{object_type}_{normalized_object_name}"
+
+
+def _build_source_file_node_id(source_path: str) -> str:
+    normalized_source_path = (
+        source_path.replace("/", "_")
+        .replace("\\", "_")
+        .replace(".", "_")
+        .replace(" ", "_")
+        .replace("-", "_")
+    )
+    return f"source_file_{normalized_source_path}"
 
 
 def _build_table_full_name(table_summary: SqlTableSummary) -> str:

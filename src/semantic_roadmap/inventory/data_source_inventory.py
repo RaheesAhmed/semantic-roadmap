@@ -5,13 +5,28 @@ from pydantic import BaseModel
 
 
 SUPPORTED_FILE_EXTENSIONS = {
-    ".doc",
+    ".asmx",
+    ".config",
+    ".cs",
+    ".csproj",
+    ".dbml",
     ".docx",
+    ".feature",
+    ".json",
     ".pdf",
+    ".postman_collection",
+    ".postman_collection_20151009",
+    ".scmp",
+    ".svc",
     ".sql",
+    ".sqlproj",
     ".txt",
+    ".wsdl",
+    ".xaml",
     ".xlsx",
     ".xlsm",
+    ".xml",
+    ".xsd",
 }
 
 
@@ -47,4 +62,3 @@ def build_data_source_inventory(data_folder_path: Path) -> DataSourceInventory:
         file_type_counts=dict(file_type_counter),
         supported_file_paths=supported_file_paths,
     )
-

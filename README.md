@@ -9,7 +9,7 @@ Semantic extraction pipeline for turning legacy system files into a readable roa
 
 ## Overview
 
-This project recursively scans `data/` and extracts a system roadmap from SQL, DOCX, PDF, TXT, and Excel-style source files. It parses database objects, API contracts, workflow documents, and source evidence into structured markdown and JSON outputs that are easy to inspect, test, and extend.
+This project recursively scans `data/` and extracts a system roadmap from SQL, DOCX, PDF, TXT, Excel, C#, WCF, DBML, Postman, WSDL, XML, JSON, and configuration files. It parses database objects, API contracts, workflow documents, application-layer source evidence, and safe configuration metadata into structured markdown and JSON outputs that are easy to inspect, test, and extend.
 
 ## Key Features
 
@@ -17,6 +17,8 @@ This project recursively scans `data/` and extracts a system roadmap from SQL, D
 - 🧩 Extracts API endpoints, request parameters, response fields, and status rules
 - 🗃️ Extracts SQL tables, columns, primary keys, indexes, descriptions, stored procedure parameters, selected fields, and referenced tables
 - 🔁 Extracts the IVR action verification workflow from PDF text
+- 🧱 Extracts application-layer intelligence from C#, WCF `.svc`, DBML, WSDL, Postman, XML, JSON, and config files
+- 🔒 Skips sensitive certificate/key files and low-value binary assets by default
 - 🧠 Exports structured semantic nodes and validated relationships as JSON
 - 📋 Writes an extraction quality report with coverage counts
 - ✅ Keeps raw source files isolated under `data/` for repeatable tests
@@ -31,13 +33,15 @@ This project recursively scans `data/` and extracts a system roadmap from SQL, D
 | PDF parsing | pypdf |
 | SQL parsing | regex extraction + sqlglot AST fallback |
 | Excel parsing | openpyxl |
+| Secure ingestion | extension allowlist + sensitive file denylist |
 | Tests | pytest |
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-    SourceFiles[SQL DOCX PDF TXT Excel files] --> Extractors[Typed extractors]
+    SourceFiles[SQL DOCX PDF TXT Excel CSharp WCF DBML Postman Config files] --> Policy[Secure ingestion policy]
+    Policy --> Extractors[Typed extractors]
     Extractors --> RoadmapBuilder[Semantic roadmap builder]
     RoadmapBuilder --> Markdown[Human roadmap markdown]
     RoadmapBuilder --> JsonGraph[Structured semantic JSON]
@@ -92,12 +96,14 @@ src/
     extractors/
       api/                                 # DOCX API contract extraction
       documents/                           # DOCX and PDF text extraction
+      source/                              # non-SQL source intelligence extraction
       spreadsheets/                        # Excel workbook extraction
       sql/                                 # SQL inventory and semantic extraction
       workflows/                           # IVR workflow extraction
     inventory/                             # recursive data source discovery
     io/                                    # output writers
     roadmap/                               # semantic graph models and builders
+    security/                              # safe ingestion policy
 tests/
   extractors/                              # extractor-level tests
   inventory/                               # source discovery tests

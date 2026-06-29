@@ -40,6 +40,7 @@ def main() -> int:
         ".pdf",
     )
     semantic_roadmap = build_semantic_roadmap(
+        data_folder_path=data_folder_path,
         crm_database_folder_path=crm_database_folder_path,
         rollsmary_api_docx_file_path=api_docx_file_path,
         ivr_flow_pdf_file_path=ivr_pdf_file_path,
